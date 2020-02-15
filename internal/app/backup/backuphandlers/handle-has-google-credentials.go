@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/naduda/sector51-golang/internal/app/apiserver/httputils"
-	"github.com/naduda/sector51-golang/internal/app/googlesheets"
+	"github.com/naduda/sector51-golang/internal/app/backup"
 	"golang.org/x/oauth2"
 )
 
@@ -14,21 +14,17 @@ import (
 func HandleHasGoogleCredentials() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		result := make(map[string]interface{})
-		config, err := googlesheets.GetGoogleConfig()
+		config, err := backup.GetGoogleConfig()
 		result["hasFile"] = err == nil
 
 		if err == nil {
 			authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 			result["authURL"] = authURL
-			_, err = googlesheets.GetClient()
+			_, err = backup.GetClientOptions()
 			result["exp"] = err != nil
 			if err == nil {
 				result["ok"] = true
 			}
-		}
-
-		if gs, err := googlesheets.GetPageID(); err == nil {
-			result["page"] = gs.PageID
 		}
 
 		httputils.Respond(w, http.StatusOK, result)
@@ -48,7 +44,7 @@ func HandleCreateGoogleTokenFile() http.HandlerFunc {
 			return
 		}
 
-		config, err := googlesheets.GetGoogleConfig()
+		config, err := backup.GetGoogleConfig()
 		if err != nil {
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return
@@ -60,7 +56,7 @@ func HandleCreateGoogleTokenFile() http.HandlerFunc {
 			return
 		}
 
-		if err = googlesheets.SaveToken(tok); err != nil {
+		if err = backup.SaveToken(tok); err != nil {
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return
 		}

@@ -3,6 +3,7 @@ package apiserver
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -38,7 +39,8 @@ func TestServer_AuthUser(t *testing.T) {
 		},
 	}
 
-	s := newServer(store, jwtSecret)
+	logger := logrus.New()
+	s := newServer(store, jwtSecret, logger)
 	mw := s.authUser(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -58,7 +60,8 @@ func TestServer_AuthUser(t *testing.T) {
 }
 
 func TestServer_HandleUsersCreate(t *testing.T) {
-	s := newServer(teststore.New(), jwtSecret)
+	logger := logrus.New()
+	s := newServer(teststore.New(), jwtSecret, logger)
 	testCases := []struct {
 		name         string
 		payload      interface{}
@@ -107,7 +110,8 @@ func TestServer_HandleLogin(t *testing.T) {
 	if err := store.User().Create(u); err != nil {
 		t.Fatal(err)
 	}
-	s := newServer(store, jwtSecret)
+	logger := logrus.New()
+	s := newServer(store, jwtSecret, logger)
 	testCases := []struct {
 		name         string
 		payload      interface{}

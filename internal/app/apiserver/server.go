@@ -32,10 +32,10 @@ type Server struct {
 	jwtSecret string
 }
 
-func newServer(store store.Store, jwtSecret string) *Server {
+func newServer(store store.Store, jwtSecret string, logger *logrus.Logger) *Server {
 	s := &Server{
 		router:    mux.NewRouter(),
-		logger:    logrus.New(),
+		logger:    logger,
 		store:     store,
 		jwtSecret: jwtSecret,
 	}

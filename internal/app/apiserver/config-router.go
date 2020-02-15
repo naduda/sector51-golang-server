@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/handlers"
-	"github.com/naduda/sector51-golang/internal/app/googlesheets/backuphandlers"
+	"github.com/naduda/sector51-golang/internal/app/backup/backuphandlers"
 )
 
 func (s *Server) configureRouter() {
@@ -21,7 +21,6 @@ func (s *Server) configureRouter() {
 	private.HandleFunc("/has-google-credentials", backuphandlers.HandleHasGoogleCredentials())
 	private.HandleFunc("/upload", s.handleUploadFile()).Methods("POST")
 	private.HandleFunc("/create-google-token", backuphandlers.HandleCreateGoogleTokenFile()).Methods("POST")
-	private.HandleFunc("/google-page-id", backuphandlers.HandleSaveSheetID()).Methods("POST")
 	private.HandleFunc("/backup", backuphandlers.HandleBackup()).Methods("POST")
 
 	fs := http.Dir("static")

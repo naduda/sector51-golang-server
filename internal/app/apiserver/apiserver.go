@@ -2,8 +2,11 @@ package apiserver
 
 import (
 	"database/sql"
+	"github.com/naduda/sector51-golang/internal/app/backup"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/lib/pq" // ...
 	"github.com/naduda/sector51-golang/internal/app/store/sqlstore"
@@ -11,31 +14,32 @@ import (
 
 // Start ...
 func Start() error {
-	connStr := os.Getenv("SECTOR_DB")
-	bindAddr := os.Getenv("SECTOR_PORT")
-	jwtSecret := os.Getenv("SECTOR_JWT")
-	db, err := newDB(connStr)
-	if err != nil {
-		return err
-	}
-
+	connStr := os.Getenv("CONNECTION_STR")
+	bindAddr := os.Getenv("WEB_PORT")
+	jwtSecret := os.Getenv("JWT_SECRET")
+	logger := logrus.New()
+	db := newDB(connStr, logger)
 	defer db.Close()
+
+	b := backup.NewBackup(connStr, logger)
+	go b.Start()
+
 	store := sqlstore.New(db)
-	srv := newServer(store, jwtSecret)
+	srv := newServer(store, jwtSecret, logger)
 	srv.logger.Infof("Server was started on port: %s", bindAddr)
 
 	return http.ListenAndServe(":"+bindAddr, srv)
 }
 
-func newDB(dbURL string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", dbURL)
-	if err != nil {
-		return nil, err
+func newDB(connStr string, log *logrus.Logger) *sql.DB {
+	for {
+		db, err := sql.Open("postgres", connStr)
+		if err == nil {
+			if err := db.Ping(); err == nil {
+				return db
+			}
+		}
+		log.Info("Waiting for DB connection...")
+		time.Sleep(5 * time.Second)
 	}
-
-	if err := db.Ping(); err != nil {
-		return nil, err
-	}
-
-	return db, nil
 }
