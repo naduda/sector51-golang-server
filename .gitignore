@@ -1,6 +1,4 @@
-/configs/credentials.json
-/configs/page-id.json
-/configs/token.json
 /static/
 /.idea/
 /.vscode/
+/configs/
