@@ -133,6 +133,7 @@ func (b Backup) CreateDump() error {
 	}
 
 	if err := cmd.Run(); err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
 
