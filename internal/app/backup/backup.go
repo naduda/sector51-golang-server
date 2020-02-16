@@ -119,9 +119,9 @@ func (b Backup) dumpCommand() *exec.Cmd {
 
 	cmd := exec.Command("pg_dump", args...)
 
-	cmdTemplate := "pg_dump --port=%d --host=%s --username=%s, --dbname=%s > %s/dump.sql"
-	command := fmt.Sprintf(cmdTemplate, b.Port, b.Host, b.UserName, b.DbName, b.Folder)
-	b.logger.Info(command)
+	//cmdTemplate := "pg_dump --port=%d --host=%s --username=%s, --dbname=%s > %s/dump.sql"
+	//command := fmt.Sprintf(cmdTemplate, b.Port, b.Host, b.UserName, b.DbName, b.Folder)
+	//b.logger.Info(command)
 	return cmd
 }
 
@@ -146,7 +146,7 @@ func (b Backup) CreateDump() error {
 		done <- cmd.Wait()
 	}()
 	select {
-	case <-time.After(5 * time.Millisecond):
+	case <-time.After(1 * time.Millisecond):
 		if err := cmd.Process.Kill(); err != nil {
 			b.logger.Error("failed to kill process: ", err)
 		}
@@ -161,10 +161,6 @@ func (b Backup) CreateDump() error {
 	bytesArray, err := ioutil.ReadAll(stdout)
 	if err != nil {
 		return err
-	}
-
-	if err := cmd.Process.Kill(); err != nil {
-		fmt.Println(err.Error())
 	}
 
 	filename := fmt.Sprintf("%s/dump.sql", b.Folder)
