@@ -185,7 +185,7 @@ func (b *Backup) Start() {
 func clearFolder(folder string) error {
 	_, err := os.Stat(folder)
 	if os.IsNotExist(err) {
-		if _, err := os.Create(folder); err != nil {
+		if err := os.Mkdir(folder, os.ModePerm); err != nil {
 			return err
 		}
 		return nil
