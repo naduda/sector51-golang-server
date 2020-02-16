@@ -146,16 +146,19 @@ func (b Backup) CreateDump() error {
 		done <- cmd.Wait()
 	}()
 	select {
-	case <-time.After(1 * time.Millisecond):
-		if err := cmd.Process.Kill(); err != nil {
-			b.logger.Error("failed to kill process: ", err)
-		}
-		b.logger.Info("process killed as timeout reached")
+	//case <-time.After(1 * time.Millisecond):
+	//	if err := cmd.Process.Kill(); err != nil {
+	//		b.logger.Error("failed to kill process: ", err)
+	//	}
+	//	b.logger.Info("process killed as timeout reached")
 	case err := <-done:
 		if err != nil {
 			b.logger.Error("process finished with error = %v", err)
 		}
 		b.logger.Info("process finished successfully")
+		if err := cmd.Process.Kill(); err != nil {
+			b.logger.Error("failed to kill process: ", err)
+		}
 	}
 
 	bytesArray, err := ioutil.ReadAll(stdout)
