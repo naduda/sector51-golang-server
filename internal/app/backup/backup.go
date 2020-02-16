@@ -121,7 +121,7 @@ func (b Backup) dumpCommand() *exec.Cmd {
 
 	cmdTemplate := "pg_dump --port=%d --host=%s --username=%s, --dbname=%s > %s/dump.sql"
 	command := fmt.Sprintf(cmdTemplate, b.Port, b.Host, b.UserName, b.DbName, b.Folder)
-	b.logger.Debug(command)
+	b.logger.Info(command)
 	return cmd
 }
 
@@ -150,19 +150,19 @@ func (b Backup) CreateDump() error {
 		if err := cmd.Process.Kill(); err != nil {
 			b.logger.Error("failed to kill process: ", err)
 		}
-		b.logger.Debug("process killed as timeout reached")
+		b.logger.Info("process killed as timeout reached")
 	case err := <-done:
 		if err != nil {
 			b.logger.Error("process finished with error = %v", err)
 		}
-		b.logger.Debug("process finished successfully")
+		b.logger.Info("process finished successfully")
 	}
 
 	bytesArray, err := ioutil.ReadAll(stdout)
 	if err != nil {
 		return err
 	}
-	fmt.Println("Killing", cmd.Process.Pid)
+
 	if err := cmd.Process.Kill(); err != nil {
 		fmt.Println(err.Error())
 	}
