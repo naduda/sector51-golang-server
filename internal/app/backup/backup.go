@@ -140,23 +140,23 @@ func (b Backup) CreateDump() error {
 		return err
 	}
 
-	//b.logger.Debug("killing...")
-	//done := make(chan error, 1)
-	//go func() {
-	//	done <- cmd.Wait()
-	//}()
-	//select {
-	//case <-time.After(3 * time.Second):
-	//	if err := cmd.Process.Kill(); err != nil {
-	//		b.logger.Error("failed to kill process: ", err)
-	//	}
-	//	b.logger.Debug("process killed as timeout reached")
-	//case err := <-done:
-	//	if err != nil {
-	//		b.logger.Error("process finished with error = %v", err)
-	//	}
-	//	b.logger.Debug("process finished successfully")
-	//}
+	b.logger.Debug("killing...")
+	done := make(chan error, 1)
+	go func() {
+		done <- cmd.Wait()
+	}()
+	select {
+	case <-time.After(5 * time.Millisecond):
+		if err := cmd.Process.Kill(); err != nil {
+			b.logger.Error("failed to kill process: ", err)
+		}
+		b.logger.Debug("process killed as timeout reached")
+	case err := <-done:
+		if err != nil {
+			b.logger.Error("process finished with error = %v", err)
+		}
+		b.logger.Debug("process finished successfully")
+	}
 
 	bytesArray, err := ioutil.ReadAll(stdout)
 	if err != nil {

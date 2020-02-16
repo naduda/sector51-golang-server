@@ -3,7 +3,6 @@ package apiserver
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
