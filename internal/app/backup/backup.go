@@ -183,6 +183,14 @@ func (b *Backup) Start() {
 }
 
 func clearFolder(folder string) error {
+	_, err := os.Stat(folder)
+	if os.IsNotExist(err) {
+		if _, err := os.Create(folder); err != nil {
+			return err
+		}
+		return nil
+	}
+
 	files, err := ioutil.ReadDir(folder)
 	if err != nil {
 		return err
