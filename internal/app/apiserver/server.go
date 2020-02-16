@@ -45,7 +45,6 @@ func newServer(store store.Store, jwtSecret string, logger *logrus.Logger) *Serv
 	}
 
 	logger.Debug("End newServer")
-	fmt.Println("...fmt...")
 	s.configureRouter()
 	return s
 }
