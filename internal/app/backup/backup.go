@@ -119,6 +119,9 @@ func (b Backup) dumpCommand() *exec.Cmd {
 
 	cmd := exec.Command("pg_dump", args...)
 
+	cmdTemplate := "pg_dump --port=%d --host=%s --username=%s, --dbname=%s > %s/dump.sql"
+	command := fmt.Sprintf(cmdTemplate, b.Port, b.Host, b.UserName, b.DbName, b.Folder)
+	b.logger.Debug(command)
 	return cmd
 }
 
@@ -137,23 +140,23 @@ func (b Backup) CreateDump() error {
 		return err
 	}
 
-	b.logger.Debug("killing...")
-	done := make(chan error, 1)
-	go func() {
-		done <- cmd.Wait()
-	}()
-	select {
-	case <-time.After(3 * time.Second):
-		if err := cmd.Process.Kill(); err != nil {
-			b.logger.Error("failed to kill process: ", err)
-		}
-		b.logger.Debug("process killed as timeout reached")
-	case err := <-done:
-		if err != nil {
-			b.logger.Error("process finished with error = %v", err)
-		}
-		b.logger.Debug("process finished successfully")
-	}
+	//b.logger.Debug("killing...")
+	//done := make(chan error, 1)
+	//go func() {
+	//	done <- cmd.Wait()
+	//}()
+	//select {
+	//case <-time.After(3 * time.Second):
+	//	if err := cmd.Process.Kill(); err != nil {
+	//		b.logger.Error("failed to kill process: ", err)
+	//	}
+	//	b.logger.Debug("process killed as timeout reached")
+	//case err := <-done:
+	//	if err != nil {
+	//		b.logger.Error("process finished with error = %v", err)
+	//	}
+	//	b.logger.Debug("process finished successfully")
+	//}
 
 	bytesArray, err := ioutil.ReadAll(stdout)
 	if err != nil {
