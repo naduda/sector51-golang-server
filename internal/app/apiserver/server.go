@@ -3,6 +3,7 @@ package apiserver
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -33,6 +34,7 @@ type Server struct {
 }
 
 func newServer(store store.Store, jwtSecret string, logger *logrus.Logger) *Server {
+	logger.Debug("Start newServer")
 	s := &Server{
 		router:    mux.NewRouter(),
 		logger:    logger,
@@ -40,8 +42,9 @@ func newServer(store store.Store, jwtSecret string, logger *logrus.Logger) *Serv
 		jwtSecret: jwtSecret,
 	}
 
+	logger.Debug("End newServer")
+	fmt.Println("...fmt...")
 	s.configureRouter()
-
 	return s
 }
 
