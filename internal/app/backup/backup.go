@@ -140,7 +140,16 @@ func (b Backup) CreateDump() error {
 		return err
 	}
 
-	b.logger.Debug("killing...")
+	bytesArray, err := ioutil.ReadAll(stdout)
+	if err != nil {
+		return err
+	}
+
+	filename := fmt.Sprintf("%s/dump.sql", b.Folder)
+	if err = ioutil.WriteFile(filename, bytesArray, os.ModePerm); err != nil {
+		b.logger.Error(err.Error())
+	}
+
 	done := make(chan error, 1)
 	go func() {
 		done <- cmd.Wait()
@@ -154,20 +163,14 @@ func (b Backup) CreateDump() error {
 	case err := <-done:
 		if err != nil {
 			b.logger.Error("process finished with error = %v", err)
+			return err
 		}
 		b.logger.Info("process finished successfully")
 		//if err := cmd.Process.Kill(); err != nil {
 		//	b.logger.Error("failed to kill process: ", err)
 		//}
+		return nil
 	}
-
-	bytesArray, err := ioutil.ReadAll(stdout)
-	if err != nil {
-		return err
-	}
-
-	filename := fmt.Sprintf("%s/dump.sql", b.Folder)
-	return ioutil.WriteFile(filename, bytesArray, os.ModePerm)
 }
 
 func (b *Backup) handleError(err error) {
