@@ -132,7 +132,7 @@ func (b Backup) CreateDump() error {
 		return err
 	}
 
-	if err := cmd.Run(); err != nil {
+	if err := cmd.Start(); err != nil {
 		fmt.Println(err.Error())
 		return err
 	}
@@ -140,6 +140,8 @@ func (b Backup) CreateDump() error {
 	bytesArray, err := ioutil.ReadAll(stdout)
 	if err != nil {
 		return err
+	} else if err := cmd.Process.Release(); err != nil {
+		fmt.Println(err.Error())
 	}
 
 	filename := fmt.Sprintf("%s/dump.sql", b.Folder)
