@@ -156,9 +156,9 @@ func (b Backup) CreateDump() error {
 			b.logger.Error("process finished with error = %v", err)
 		}
 		b.logger.Info("process finished successfully")
-		if err := cmd.Process.Kill(); err != nil {
-			b.logger.Error("failed to kill process: ", err)
-		}
+		//if err := cmd.Process.Kill(); err != nil {
+		//	b.logger.Error("failed to kill process: ", err)
+		//}
 	}
 
 	bytesArray, err := ioutil.ReadAll(stdout)
