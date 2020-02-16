@@ -137,12 +137,13 @@ func (b Backup) CreateDump() error {
 		return err
 	}
 
+	b.logger.Debug("killing...")
 	done := make(chan error, 1)
 	go func() {
 		done <- cmd.Wait()
 	}()
 	select {
-	case <-time.After(3 * time.Millisecond):
+	case <-time.After(3 * time.Second):
 		if err := cmd.Process.Kill(); err != nil {
 			b.logger.Error("failed to kill process: ", err)
 		}
