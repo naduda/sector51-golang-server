@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -34,6 +35,7 @@ type Server struct {
 }
 
 func newServer(store store.Store, jwtSecret string, logger *logrus.Logger) *Server {
+	logger.SetOutput(os.Stdout)
 	logger.Debug("Start newServer")
 	s := &Server{
 		router:    mux.NewRouter(),

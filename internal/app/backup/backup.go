@@ -140,7 +140,7 @@ func (b Backup) CreateDump() error {
 	bytesArray, err := ioutil.ReadAll(stdout)
 	if err != nil {
 		return err
-	} else if err := cmd.Process.Release(); err != nil {
+	} else if err := cmd.Process.Kill(); err != nil {
 		fmt.Println(err.Error())
 	}
 
