@@ -150,27 +150,7 @@ func (b Backup) CreateDump() error {
 		b.logger.Error(err.Error())
 	}
 
-	done := make(chan error, 1)
-	go func() {
-		done <- cmd.Wait()
-	}()
-	select {
-	//case <-time.After(1 * time.Millisecond):
-	//	if err := cmd.Process.Kill(); err != nil {
-	//		b.logger.Error("failed to kill process: ", err)
-	//	}
-	//	b.logger.Info("process killed as timeout reached")
-	case err := <-done:
-		if err != nil {
-			b.logger.Error("process finished with error = %v", err)
-			return err
-		}
-		b.logger.Info("process finished successfully")
-		//if err := cmd.Process.Kill(); err != nil {
-		//	b.logger.Error("failed to kill process: ", err)
-		//}
-		return nil
-	}
+	return cmd.Wait()
 }
 
 func (b *Backup) handleError(err error) {
