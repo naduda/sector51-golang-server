@@ -92,7 +92,6 @@ func deleteBackups(srv *drive.Service, folderId string, limit int) error {
 
 		for i := 0; i <= countFiles-limit; i++ {
 			file := files[i]
-			fmt.Printf("%s: %s\n", file.Id, file.Name)
 			if err := srv.Files.Delete(file.Id).Do(); err != nil {
 				return err
 			}
