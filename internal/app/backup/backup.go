@@ -108,7 +108,7 @@ func (b *Backup) saveToJson() error {
 	return json.NewEncoder(f).Encode(b)
 }
 
-func (b Backup) dumpCommand() *exec.Cmd {
+func (b Backup) CreateDump() error {
 	filename := fmt.Sprintf("%s/dump.sql", b.Folder)
 
 	args := []string{
@@ -120,33 +120,10 @@ func (b Backup) dumpCommand() *exec.Cmd {
 	}
 
 	cmd := exec.Command("pg_dump", args...)
-
-	return cmd
-}
-
-func (b Backup) CreateDump() error {
-	cmd := b.dumpCommand()
-
-	//stdout, err := cmd.StdoutPipe()
-	//var out bytes.Buffer
-	//cmd.Stderr = &out
-	//if err != nil {
-	//	return err
-	//}
-	//
 	if err := cmd.Start(); err != nil {
 		b.logger.Error(err.Error())
 		return err
 	}
-	//
-	//bytesArray, err := ioutil.ReadAll(stdout)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//if err = ioutil.WriteFile(filename, bytesArray, os.ModePerm); err != nil {
-	//	b.logger.Error(err.Error())
-	//}
 
 	return cmd.Wait()
 }
