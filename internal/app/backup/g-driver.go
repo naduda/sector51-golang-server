@@ -90,6 +90,7 @@ func (b *Backup) GetDumpList() ([]string, error) {
 		files := r.Files
 		var res []string
 		for _, f := range files {
+			b.logger.Info(f.Id, f.Name)
 			res = append(res, f.Id)
 		}
 		return res, nil
@@ -107,18 +108,16 @@ func (b *Backup) Download(id string, filename string) error {
 
 	res, err := srv.Files.Get(id).Download()
 	if err != nil {
-		fmt.Printf("An error occurred: %v\n", err)
 		return err
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		fmt.Printf("An error occurred: %v\n", err)
 		return err
 	}
 
-	return ioutil.WriteFile(filename, body, os.ModePerm)
+	return ioutil.WriteFile(filename, body, 0644)
 }
 
 func deleteBackups(srv *drive.Service, folderId string, limit int) error {
