@@ -13,7 +13,6 @@ import (
 func TestDB(t *testing.T, databaseURL string) (*sql.DB, func(...string)) {
 	t.Helper()
 
-	fmt.Println(databaseURL)
 	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		t.Fatal(err)
