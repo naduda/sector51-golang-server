@@ -22,7 +22,7 @@ func (s *Server) configureRouter() {
 	private.HandleFunc("/upload", s.handleUploadFile()).Methods("POST")
 	private.HandleFunc("/create-google-token", backuphandlers.HandleCreateGoogleTokenFile()).Methods("POST")
 	private.HandleFunc("/backup", backuphandlers.HandleBackup(s.logger)).Methods("POST")
-	private.HandleFunc("/restore", backuphandlers.HandleRestore(s.logger)).Methods("GET")
+	private.HandleFunc("/restore", backuphandlers.HandleRestore(s.logger)).Methods("POST")
 
 	fs := http.Dir("static")
 	fileHandler := http.FileServer(fs)

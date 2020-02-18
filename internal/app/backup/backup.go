@@ -100,6 +100,25 @@ func (b Backup) CreateDump() error {
 	return cmd.Wait()
 }
 
+// Restore ...
+func (b Backup) Restore(filename string) error {
+	args := []string{
+		fmt.Sprintf("--port=%d", b.Port),
+		fmt.Sprintf("--host=%s", b.Host),
+		fmt.Sprintf("--username=%s", b.UserName),
+		fmt.Sprintf("--dbname=%s", b.DbName),
+		fmt.Sprintf("--clean %s", filename),
+	}
+
+	cmd := exec.Command("pg_restore", args...)
+	if err := cmd.Start(); err != nil {
+		b.logger.Error(err.Error())
+		return err
+	}
+
+	return cmd.Wait()
+}
+
 func (b *Backup) handleError(err error) {
 	b.logger.Error(err.Error())
 	time.Sleep(1 * time.Minute)

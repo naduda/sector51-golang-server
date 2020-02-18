@@ -99,7 +99,7 @@ func (b *Backup) GetDumpList() ([]string, error) {
 }
 
 // Download backup file
-func (b *Backup) Download(id string) error {
+func (b *Backup) Download(id string, filename string) error {
 	srv, err := GetDriveService()
 	if err != nil {
 		return err
@@ -118,9 +118,7 @@ func (b *Backup) Download(id string) error {
 		return err
 	}
 
-	fmt.Println(string(body))
-
-	return err
+	return ioutil.WriteFile(filename, body, os.ModePerm)
 }
 
 func deleteBackups(srv *drive.Service, folderId string, limit int) error {
