@@ -79,6 +79,25 @@ func (b *Backup) Upload() error {
 	return err
 }
 
+func (b *Backup) GetDumpList() ([]string, error) {
+	srv, err := GetDriveService()
+	if err != nil {
+		return nil, err
+	}
+
+	folder := fmt.Sprintf("'%s' in parents", b.GoogleDriveFolderId)
+	if r, err := srv.Files.List().Q(folder).Fields("files(id, name)").Do(); err == nil {
+		files := r.Files
+		var res []string
+		for _, f := range files {
+			res = append(res, f.Id)
+		}
+		return res, nil
+	} else {
+		return nil, err
+	}
+}
+
 // Download backup file
 func (b *Backup) Download(id string) error {
 	srv, err := GetDriveService()
