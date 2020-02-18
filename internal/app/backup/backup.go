@@ -134,10 +134,10 @@ func (b Backup) CreateDump() error {
 	//	return err
 	//}
 	//
-	//if err := cmd.Start(); err != nil {
-	//	b.logger.Error(err.Error())
-	//	return err
-	//}
+	if err := cmd.Start(); err != nil {
+		b.logger.Error(err.Error())
+		return err
+	}
 	//
 	//bytesArray, err := ioutil.ReadAll(stdout)
 	//if err != nil {
