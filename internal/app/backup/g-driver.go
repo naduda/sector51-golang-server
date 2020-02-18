@@ -3,6 +3,7 @@ package backup
 import (
 	"fmt"
 	"google.golang.org/api/drive/v3"
+	"io/ioutil"
 	"os"
 	"sort"
 	"time"
@@ -75,6 +76,31 @@ func (b *Backup) Upload() error {
 	filename = fmt.Sprintf("dump_%s.sql", currentDate)
 
 	_, err = CreateFile(srv, filename, f, b.GoogleDriveFolderId)
+	return err
+}
+
+// Download backup file
+func (b *Backup) Download(id string) error {
+	srv, err := GetDriveService()
+	if err != nil {
+		return err
+	}
+
+	res, err := srv.Files.Get(id).Download()
+	if err != nil {
+		fmt.Printf("An error occurred: %v\n", err)
+		return err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("An error occurred: %v\n", err)
+		return err
+	}
+
+	fmt.Println(string(body))
+
 	return err
 }
 

@@ -1,7 +1,6 @@
 package backup
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -14,7 +13,6 @@ import (
 
 const (
 	DateFormat = "20060102150405"
-	FileJson   = "configs/backup.json"
 )
 
 type Backup struct {
@@ -30,12 +28,7 @@ type Backup struct {
 	GoogleDriveFolderId string `json:"googleDriveFolderId"`
 }
 
-func New(connStr string, logger *logrus.Logger) *Backup {
-	if result, err := backupFromFile(); err == nil {
-		result.logger = logger
-		return result
-	}
-
+func New(logger *logrus.Logger) *Backup {
 	period, err := strconv.Atoi(os.Getenv("BACKUP_PERIOD_SEC"))
 	if err != nil {
 		period = 15
@@ -59,6 +52,7 @@ func New(connStr string, logger *logrus.Logger) *Backup {
 		result.GoogleDriveFolderId = id
 	}
 
+	connStr := os.Getenv("CONNECTION_STR")
 	connStr = strings.Split(connStr, "//")[1]
 	arr := strings.Split(connStr, "@")
 
@@ -82,30 +76,7 @@ func New(connStr string, logger *logrus.Logger) *Backup {
 		}
 	}
 
-	if err := result.saveToJson(); err != nil {
-		logger.Error("Can't save backup json")
-	}
 	return result
-}
-
-func backupFromFile() (*Backup, error) {
-	f, err := os.Open(FileJson)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	tok := &Backup{}
-	err = json.NewDecoder(f).Decode(tok)
-	return tok, err
-}
-
-func (b *Backup) saveToJson() error {
-	f, err := os.OpenFile(FileJson, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	return json.NewEncoder(f).Encode(b)
 }
 
 func (b Backup) CreateDump() error {
@@ -142,10 +113,6 @@ func (b *Backup) Start() {
 				continue
 			} else {
 				b.GoogleDriveFolderId = id
-				if err = b.saveToJson(); err != nil {
-					b.handleError(err)
-					continue
-				}
 			}
 		}
 
@@ -154,16 +121,27 @@ func (b *Backup) Start() {
 			continue
 		}
 
-		if err := b.CreateDump(); err != nil {
-			b.handleError(err)
-			continue
-		} else if err = b.Upload(); err != nil {
+		if err := b.CreateDumpAndUpload(); err != nil {
 			b.handleError(err)
 			continue
 		}
 
 		time.Sleep(time.Duration(b.Period) * time.Second)
 	}
+}
+
+func (b Backup) CreateDumpAndUpload() (err error) {
+	for i := 0; i < 5; i++ {
+		if err = b.CreateDump(); err != nil {
+			b.handleError(err)
+			continue
+		} else if err = b.Upload(); err != nil {
+			b.handleError(err)
+			continue
+		}
+		break
+	}
+	return
 }
 
 func clearFolder(folder string) error {
