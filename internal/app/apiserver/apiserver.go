@@ -21,7 +21,7 @@ func Start() error {
 	db := newDB(connStr, logger)
 	defer db.Close()
 
-	b := backup.NewBackup(connStr, logger)
+	b := backup.New(connStr, logger)
 	go b.Start()
 
 	store := sqlstore.New(db)

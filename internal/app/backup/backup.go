@@ -1,7 +1,6 @@
 package backup
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
@@ -31,7 +30,7 @@ type Backup struct {
 	GoogleDriveFolderId string `json:"googleDriveFolderId"`
 }
 
-func NewBackup(connStr string, logger *logrus.Logger) *Backup {
+func New(connStr string, logger *logrus.Logger) *Backup {
 	if result, err := backupFromFile(); err == nil {
 		result.logger = logger
 		return result
@@ -110,45 +109,44 @@ func (b *Backup) saveToJson() error {
 }
 
 func (b Backup) dumpCommand() *exec.Cmd {
+	filename := fmt.Sprintf("%s/dump.sql", b.Folder)
+
 	args := []string{
 		fmt.Sprintf("--port=%d", b.Port),
 		fmt.Sprintf("--host=%s", b.Host),
 		fmt.Sprintf("--username=%s", b.UserName),
 		fmt.Sprintf("--dbname=%s", b.DbName),
+		fmt.Sprintf("--file=%s", filename),
 	}
 
 	cmd := exec.Command("pg_dump", args...)
 
-	//cmdTemplate := "pg_dump --port=%d --host=%s --username=%s, --dbname=%s > %s/dump.sql"
-	//command := fmt.Sprintf(cmdTemplate, b.Port, b.Host, b.UserName, b.DbName, b.Folder)
-	//b.logger.Info(command)
 	return cmd
 }
 
 func (b Backup) CreateDump() error {
 	cmd := b.dumpCommand()
 
-	stdout, err := cmd.StdoutPipe()
-	var out bytes.Buffer
-	cmd.Stderr = &out
-	if err != nil {
-		return err
-	}
-
-	if err := cmd.Start(); err != nil {
-		b.logger.Error(err.Error())
-		return err
-	}
-
-	bytesArray, err := ioutil.ReadAll(stdout)
-	if err != nil {
-		return err
-	}
-
-	filename := fmt.Sprintf("%s/dump.sql", b.Folder)
-	if err = ioutil.WriteFile(filename, bytesArray, os.ModePerm); err != nil {
-		b.logger.Error(err.Error())
-	}
+	//stdout, err := cmd.StdoutPipe()
+	//var out bytes.Buffer
+	//cmd.Stderr = &out
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//if err := cmd.Start(); err != nil {
+	//	b.logger.Error(err.Error())
+	//	return err
+	//}
+	//
+	//bytesArray, err := ioutil.ReadAll(stdout)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//if err = ioutil.WriteFile(filename, bytesArray, os.ModePerm); err != nil {
+	//	b.logger.Error(err.Error())
+	//}
 
 	return cmd.Wait()
 }
