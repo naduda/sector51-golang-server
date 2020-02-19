@@ -62,19 +62,21 @@ func (b *Backup) Upload() error {
 		return err
 	}
 	filename := fmt.Sprintf("%s/db.dump", b.Folder)
+	b.logger.Info("Uploading ", filename)
 	f, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
+	b.logger.Info("deleteBackups ")
 	if err := deleteBackups(srv, b.GoogleDriveFolderId, b.Count); err != nil {
 		b.logger.Error(err.Error())
 	}
 
 	currentDate := time.Now().Format(DateFormat)
 	filename = fmt.Sprintf("db_%s.dump", currentDate)
-
+	b.logger.Info("CreateFile ", filename)
 	_, err = CreateFile(srv, filename, f, b.GoogleDriveFolderId)
 	return err
 }
