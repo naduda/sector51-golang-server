@@ -110,6 +110,10 @@ func (b Backup) Restore(filename string) error {
 		fmt.Sprintf("--clean %s", filename),
 	}
 
+	b.logger.Info(filename)
+	for _, arg := range args {
+		b.logger.Info(arg)
+	}
 	cmd := exec.Command("pg_restore", args...)
 	if err := cmd.Start(); err != nil {
 		b.logger.Error(err.Error())

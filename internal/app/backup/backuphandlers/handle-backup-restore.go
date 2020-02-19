@@ -26,17 +26,15 @@ func HandleRestore(logger *logrus.Logger) http.HandlerFunc {
 	b := backup.New(logger)
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		logger.Warn("*** Restore ***")
 		list, err := b.GetDumpList()
 		if err != nil {
-			logger.Error("Err 1", err.Error())
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return
 		}
 
+		logger.Error("Downloading...", list[0])
 		dumpfile := "/tmp/dump.sql"
 		if err = b.Download(list[0], dumpfile); err != nil {
-			logger.Error("Err 2", err.Error())
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return
 		}
