@@ -112,13 +112,7 @@ func (b Backup) Restore(filename string) error {
 		filename,
 	}
 
-	b.logger.Info(filename)
-	for _, arg := range args {
-		b.logger.Info(arg)
-	}
 	cmd := exec.Command("pg_restore", args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
 		b.logger.Error(err.Error())
 		return err

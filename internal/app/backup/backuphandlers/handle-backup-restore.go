@@ -32,7 +32,6 @@ func HandleRestore(logger *logrus.Logger) http.HandlerFunc {
 			return
 		}
 
-		logger.Error("Downloading...", list[0])
 		dumpfile := "/tmp/db.dump"
 		if err = b.Download(list[0], dumpfile); err != nil {
 			httputils.SendError(w, http.StatusBadRequest, err)
@@ -40,7 +39,6 @@ func HandleRestore(logger *logrus.Logger) http.HandlerFunc {
 		}
 
 		if err = b.Restore(dumpfile); err != nil {
-			logger.Error("Err 3", err.Error())
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return
 		}
