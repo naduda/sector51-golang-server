@@ -93,7 +93,7 @@ func (b Backup) CreateDump() error {
 
 	cmd := exec.Command("pg_dump", args...)
 	if err := cmd.Start(); err != nil {
-		b.logger.Error(err.Error())
+		b.logger.Error("dump error", err.Error())
 		return err
 	}
 
