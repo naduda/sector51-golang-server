@@ -88,18 +88,16 @@ func (b Backup) CreateDump() error {
 		fmt.Sprintf("--username=%s", b.UserName),
 		fmt.Sprintf("--dbname=%s", b.DbName),
 		fmt.Sprintf("--file=%s", filename),
-		"--format=custom --clean",
+		"--format=custom",
+		"--clean",
 	}
 
 	cmd := exec.Command("pg_dump", args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	b.logger.Info("Before")
 	if err := cmd.Start(); err != nil {
 		b.logger.Error("dump error", err.Error())
 		return err
 	}
-	b.logger.Info("After")
+
 	return cmd.Wait()
 }
 
