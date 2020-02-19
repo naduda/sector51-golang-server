@@ -108,7 +108,8 @@ func (b Backup) Restore(filename string) error {
 		fmt.Sprintf("--host=%s", b.Host),
 		fmt.Sprintf("--username=%s", b.UserName),
 		fmt.Sprintf("--dbname=%s", b.DbName),
-		fmt.Sprintf("--clean %s", filename),
+		"--clean",
+		filename,
 	}
 
 	b.logger.Info(filename)
@@ -116,6 +117,8 @@ func (b Backup) Restore(filename string) error {
 		b.logger.Info(arg)
 	}
 	cmd := exec.Command("pg_restore", args...)
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
 		b.logger.Error(err.Error())
 		return err
