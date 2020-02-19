@@ -123,15 +123,14 @@ func (b *Backup) Download(id string, filename string) error {
 
 func deleteBackups(srv *drive.Service, folderId string, limit int) error {
 	folder := fmt.Sprintf("'%s' in parents", folderId)
-	if r, err := srv.Files.List().Q(folder).Fields("files(id, name, createdTime)").Do(); err == nil {
+	if r, err := srv.Files.List().Q(folder).Fields("files(id, createdTime)").Do(); err == nil {
 		files := r.Files
 		countFiles := len(files)
 		if countFiles < limit {
 			return nil
 		}
 		sort.Slice(files[:], func(i, j int) bool {
-			fmt.Println("created time", files[i].Name, files[i].CreatedTime)
-			return files[i].Name < files[j].Name
+			return files[i].CreatedTime < files[j].CreatedTime
 		})
 
 		for i := 0; i <= countFiles-limit; i++ {
