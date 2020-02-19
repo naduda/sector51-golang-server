@@ -88,7 +88,7 @@ func (b Backup) CreateDump() error {
 		fmt.Sprintf("--username=%s", b.UserName),
 		fmt.Sprintf("--dbname=%s", b.DbName),
 		fmt.Sprintf("--file=%s", filename),
-		"--clean",
+		"-Fc --clean",
 	}
 
 	cmd := exec.Command("pg_dump", args...)
