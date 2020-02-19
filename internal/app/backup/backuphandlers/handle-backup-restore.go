@@ -26,6 +26,7 @@ func HandleRestore(logger *logrus.Logger) http.HandlerFunc {
 	b := backup.New(logger)
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		logger.Warn("*** Restore ***")
 		list, err := b.GetDumpList()
 		if err != nil {
 			logger.Error("Err 1", err.Error())
