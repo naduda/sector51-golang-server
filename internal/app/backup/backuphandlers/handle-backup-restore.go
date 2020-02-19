@@ -33,7 +33,7 @@ func HandleRestore(logger *logrus.Logger) http.HandlerFunc {
 		}
 
 		logger.Error("Downloading...", list[0])
-		dumpfile := "/tmp/dump.sql"
+		dumpfile := "/tmp/db.dump"
 		if err = b.Download(list[0], dumpfile); err != nil {
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return

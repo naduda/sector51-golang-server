@@ -80,7 +80,7 @@ func New(logger *logrus.Logger) *Backup {
 }
 
 func (b Backup) CreateDump() error {
-	filename := fmt.Sprintf("%s/dump.sql", b.Folder)
+	filename := fmt.Sprintf("%s/db.dump", b.Folder)
 
 	args := []string{
 		fmt.Sprintf("--port=%d", b.Port),
@@ -88,7 +88,7 @@ func (b Backup) CreateDump() error {
 		fmt.Sprintf("--username=%s", b.UserName),
 		fmt.Sprintf("--dbname=%s", b.DbName),
 		fmt.Sprintf("--file=%s", filename),
-		"-Fc --clean",
+		"--format=custom --clean",
 	}
 
 	cmd := exec.Command("pg_dump", args...)
