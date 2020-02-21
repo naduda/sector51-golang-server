@@ -64,7 +64,7 @@ func (b *Backup) Upload() error {
 	filename := fmt.Sprintf("%s/db.dump", b.Folder)
 
 	zipFile := fmt.Sprintf("%s.zip", filename)
-	if err := ZipFiles(zipFile, []string{filename}); err != nil {
+	if err := Zipping(filename, zipFile); err != nil {
 		return err
 	}
 

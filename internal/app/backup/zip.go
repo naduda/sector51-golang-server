@@ -5,97 +5,107 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
-// Unzip ...
-//noinspection GoUnhandledErrorResult
-func Unzip(src string, dest string) error {
-	r, err := zip.OpenReader(src)
+// Unzipping
+func Unzipping(src, dest string) error {
+	reader, err := zip.OpenReader(src)
 	if err != nil {
 		return err
 	}
-	defer r.Close()
 
-	for _, f := range r.File {
-		filePath := filepath.Join(dest, f.Name)
-
-		if f.FileInfo().IsDir() {
-			os.MkdirAll(filePath, os.ModePerm)
-			continue
-		}
-
-		if err = os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
-			return err
-		}
-
-		outFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-		if err != nil {
-			return err
-		}
-
-		rc, err := f.Open()
-		if err != nil {
-			outFile.Close()
-			return err
-		}
-
-		_, err = io.Copy(outFile, rc)
-
-		outFile.Close()
-		rc.Close()
-
-		if err != nil {
-			continue
-		}
-	}
-
-	return os.Remove(src)
-}
-
-// ZipFiles ...
-//noinspection GoUnhandledErrorResult
-func ZipFiles(filename string, files []string) error {
-	newZipFile, err := os.Create(filename)
-	if err != nil {
+	if err := os.MkdirAll(dest, 0755); err != nil {
 		return err
 	}
-	defer newZipFile.Close()
 
-	zipWriter := zip.NewWriter(newZipFile)
-	defer zipWriter.Close()
+	for _, file := range reader.File {
+		path := filepath.Join(dest, file.Name)
+		if file.FileInfo().IsDir() {
+			if err := os.MkdirAll(path, file.Mode()); err != nil {
+				return err
+			}
+			continue
+		}
 
-	for _, file := range files {
-		if err = addFileToZip(zipWriter, file); err != nil {
+		fileReader, err := file.Open()
+		if err != nil {
+			return err
+		}
+		//noinspection ALL
+		defer fileReader.Close()
+
+		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
+		if err != nil {
+			return err
+		}
+		//noinspection ALL
+		defer targetFile.Close()
+
+		if _, err := io.Copy(targetFile, fileReader); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
-func addFileToZip(zipWriter *zip.Writer, filename string) error {
-	fileToZip, err := os.Open(filename)
+func Zipping(src, dest string) error {
+	zipfile, err := os.Create(dest)
 	if err != nil {
 		return err
 	}
-	defer fileToZip.Close()
+	defer zipfile.Close()
 
-	info, err := fileToZip.Stat()
+	archive := zip.NewWriter(zipfile)
+	//noinspection ALL
+	defer archive.Close()
+
+	info, err := os.Stat(src)
 	if err != nil {
-		return err
+		return nil
 	}
 
-	header, err := zip.FileInfoHeader(info)
-	if err != nil {
-		return err
+	var baseDir string
+	if info.IsDir() {
+		baseDir = filepath.Base(src)
 	}
 
-	header.Name = filename
-	header.Method = zip.Deflate
+	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 
-	writer, err := zipWriter.CreateHeader(header)
-	if err != nil {
+		header, err := zip.FileInfoHeader(info)
+		if err != nil {
+			return err
+		}
+
+		if baseDir != "" {
+			header.Name = filepath.Join(baseDir, strings.TrimPrefix(path, src))
+		}
+
+		if info.IsDir() {
+			header.Name += "/"
+		} else {
+			header.Method = zip.Deflate
+		}
+
+		writer, err := archive.CreateHeader(header)
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		_, err = io.Copy(writer, file)
 		return err
-	}
-	_, err = io.Copy(writer, fileToZip)
-	return err
+	})
 }
