@@ -225,7 +225,7 @@ func FindFileByExt(dir, ext string) (string, error) {
 	ext = strings.ToLower(ext)
 	for _, name := range names {
 		if strings.HasSuffix(strings.ToLower(name), ext) {
-			return name, nil
+			return filepath.Join(dir, name), nil
 		}
 	}
 	return "", errors.New("file not found")
