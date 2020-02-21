@@ -224,10 +224,10 @@ func FindFileByExt(dir, ext string) (string, error) {
 	}
 	ext = strings.ToLower(ext)
 	for _, name := range names {
-		fmt.Println(name)
 		if strings.HasSuffix(strings.ToLower(name), ext) {
-			fmt.Printf("Name: %s\n\n\n%s", name, filepath.Join(dir, name))
-			return filepath.Join(dir, name), nil
+			fmt.Printf("\n\n\n%s - %s\n\n\n", dir, name)
+			name = filepath.Join(dir, name)
+			return name, nil
 		}
 	}
 	return "", errors.New("file not found")
