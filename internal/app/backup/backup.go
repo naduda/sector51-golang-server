@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -139,7 +138,7 @@ func (b *Backup) Start() {
 			}
 		}
 
-		if err := clearFolder(b.Folder); err != nil {
+		if err := ClearFolder(b.Folder); err != nil {
 			b.handleError(err)
 			continue
 		}
@@ -165,30 +164,6 @@ func (b Backup) CreateDumpAndUpload() (err error) {
 		break
 	}
 	return
-}
-
-func clearFolder(folder string) error {
-	_, err := os.Stat(folder)
-	if os.IsNotExist(err) {
-		if err := os.Mkdir(folder, os.ModePerm); err != nil {
-			return err
-		}
-		return nil
-	}
-
-	files, err := ioutil.ReadDir(folder)
-	if err != nil {
-		return err
-	}
-
-	for _, f := range files {
-		path := fmt.Sprintf("%s/%s", folder, f.Name())
-		if err = os.Remove(path); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // ClearFolder ...

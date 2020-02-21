@@ -96,7 +96,6 @@ func (b *Backup) GetDumpList() ([]string, error) {
 		files := r.Files
 		var res []string
 		for _, f := range files {
-			b.logger.Info(f.Id, f.Name)
 			res = append(res, f.Id)
 		}
 		return res, nil
