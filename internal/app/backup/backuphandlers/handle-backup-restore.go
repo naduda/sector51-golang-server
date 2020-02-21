@@ -1,6 +1,7 @@
 package backuphandlers
 
 import (
+	"fmt"
 	"github.com/naduda/sector51-golang/internal/app/backup"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -39,7 +40,9 @@ func HandleRestore(logger *logrus.Logger) http.HandlerFunc {
 		}
 
 		dumpFile := "/tmp/db.dump"
+		fmt.Println("Unzipping")
 		if err := backup.Unzip(zipFile, dumpFile); err != nil {
+			fmt.Println(err.Error())
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return
 		}
