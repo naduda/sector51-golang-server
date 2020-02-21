@@ -40,9 +40,8 @@ func HandleRestore(logger *logrus.Logger) http.HandlerFunc {
 		}
 
 		dumpFile := "/tmp/db.dump"
-		fmt.Println("Unzipping")
 		if err := backup.Unzipping(zipFile, dumpFile); err != nil {
-			fmt.Println(err.Error())
+			fmt.Println("111111111", err.Error())
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return
 		}
