@@ -1,11 +1,13 @@
 package backup
 
 import (
+	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -187,4 +189,44 @@ func clearFolder(folder string) error {
 	}
 
 	return nil
+}
+
+// ClearFolder ...
+func ClearFolder(dir string) error {
+	d, err := os.Open(dir)
+	if err != nil {
+		return err
+	}
+	defer d.Close()
+	names, err := d.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
+		err = os.RemoveAll(filepath.Join(dir, name))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// FindFileByExt ...
+func FindFileByExt(dir, ext string) (string, error) {
+	d, err := os.Open(dir)
+	if err != nil {
+		return "", err
+	}
+	defer d.Close()
+	names, err := d.Readdirnames(-1)
+	if err != nil {
+		return "", err
+	}
+	ext = strings.ToLower(ext)
+	for _, name := range names {
+		if strings.HasSuffix(strings.ToLower(name), ext) {
+			return name, nil
+		}
+	}
+	return "", errors.New("file not found")
 }
