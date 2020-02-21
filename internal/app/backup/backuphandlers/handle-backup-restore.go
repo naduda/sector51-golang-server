@@ -32,13 +32,19 @@ func HandleRestore(logger *logrus.Logger) http.HandlerFunc {
 			return
 		}
 
-		dumpfile := "/tmp/db.dump"
+		dumpfile := "/tmp/db.zip"
 		if err = b.Download(list[0], dumpfile); err != nil {
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return
 		}
 
-		if err = b.Restore(dumpfile); err != nil {
+		unzip := "/tmp/db.dump"
+		if err := backup.Unzip(dumpfile, unzip); err != nil {
+			httputils.SendError(w, http.StatusBadRequest, err)
+			return
+		}
+
+		if err = b.Restore(unzip); err != nil {
 			httputils.SendError(w, http.StatusBadRequest, err)
 			return
 		}
