@@ -63,12 +63,7 @@ func (b *Backup) Upload() error {
 	}
 	filename := fmt.Sprintf("%s/db.dump", b.Folder)
 
-	zipFile := fmt.Sprintf("%s.zip", filename)
-	if err := Zipping(filename, zipFile); err != nil {
-		return err
-	}
-
-	f, err := os.Open(zipFile)
+	f, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
@@ -79,7 +74,7 @@ func (b *Backup) Upload() error {
 	}
 
 	currentDate := time.Now().Format(DateFormat)
-	filename = fmt.Sprintf("db_%s.zip", currentDate)
+	filename = fmt.Sprintf("db_%s.dump", currentDate)
 
 	_, err = CreateFile(srv, filename, f, b.GoogleDriveFolderId)
 	return err
