@@ -22,9 +22,6 @@ func HandleHasGoogleCredentials() http.HandlerFunc {
 			result["authURL"] = authURL
 			_, err = backup.GetClientOptions()
 			result["exp"] = err != nil
-			if err == nil {
-				result["ok"] = true
-			}
 		}
 
 		httputils.Respond(w, http.StatusOK, result)
