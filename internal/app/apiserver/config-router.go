@@ -18,6 +18,7 @@ func (s *Server) configureRouter() {
 	private := s.router.PathPrefix("/private").Subrouter()
 	private.Use(s.authUser)
 	private.HandleFunc("/whoami", s.handleWhoami())
+	private.HandleFunc("/clients-list", s.handleUsers())
 	private.HandleFunc("/has-google-credentials", backuphandlers.HandleHasGoogleCredentials())
 	private.HandleFunc("/upload", s.handleUploadFile()).Methods("POST")
 	private.HandleFunc("/create-google-token", backuphandlers.HandleCreateGoogleTokenFile()).Methods("POST")

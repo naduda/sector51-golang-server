@@ -27,6 +27,17 @@ func TestUserRepository_Find(t *testing.T) {
 	assert.NotNil(t, u2)
 }
 
+func TestUserRepository_FindAll(t *testing.T) {
+	s := teststore.New()
+	u1 := model.TestUser(t)
+	if err := s.User().Create(u1); err != nil {
+		t.Fatal(err)
+	}
+	r, err := s.User().FindAll()
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(r))
+}
+
 func TestUserRepository_FindByPhone(t *testing.T) {
 	s := teststore.New()
 	u1 := model.TestUser(t)

@@ -12,9 +12,9 @@ const BCRYP_MIN_COST = 12
 type User struct {
 	ID                string `json:"id"`
 	Phone             string `json:"phone"`
-	Password          string `json:"password,omitempty"`
 	Name              string `json:"name"`
 	Surname           string `json:"surname"`
+	Password          string `json:"password,omitempty"`
 	EncryptedPassword string `json:"-"`
 }
 

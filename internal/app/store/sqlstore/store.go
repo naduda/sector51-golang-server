@@ -6,7 +6,7 @@ import (
 	"github.com/naduda/sector51-golang/internal/app/store"
 )
 
-// Store ...
+// store ...
 type Store struct {
 	db             *sql.DB
 	userRepository *UserRepository

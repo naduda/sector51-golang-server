@@ -2,7 +2,6 @@ package apiserver
 
 import (
 	"database/sql"
-	"github.com/naduda/sector51-golang/internal/app/backup"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
@@ -21,8 +20,8 @@ func Start() error {
 	db := newDB(connStr, logger)
 	defer db.Close()
 
-	b := backup.New(logger)
-	go b.Start()
+	//b := backup.New(logger)
+	//go b.Start()
 
 	store := sqlstore.New(db)
 	srv := newServer(store, jwtSecret, logger)

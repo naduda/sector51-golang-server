@@ -38,6 +38,15 @@ func (r *UserRepository) Find(id string) (*model.User, error) {
 	return u, nil
 }
 
+// FindAll ...
+func (r *UserRepository) FindAll() ([]*model.User, error) {
+	res := make([]*model.User, 0)
+	for _, u := range r.users {
+		res = append(res, u)
+	}
+	return res, nil
+}
+
 // FindByPhone ...
 func (r *UserRepository) FindByPhone(phone string) (*model.User, error) {
 	for _, u := range r.users {

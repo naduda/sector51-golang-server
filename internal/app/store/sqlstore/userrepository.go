@@ -68,6 +68,36 @@ func (r *UserRepository) Find(id string) (*model.User, error) {
 	return u, nil
 }
 
+// FindAll ...
+func (r *UserRepository) FindAll() ([]*model.User, error) {
+	res := make([]*model.User, 0)
+
+	query := "SELECT ui.created, ui.phone, ui.name, ui.surname, us.password " +
+		"FROM usersecurity us LEFT JOIN userinfo ui ON us.created = ui.created " +
+		"ORDER BY ui.surname, ui.name"
+	rows, err := r.store.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		u := &model.User{}
+		if err := rows.Scan(
+			&u.ID,
+			&u.Phone,
+			&u.Name,
+			&u.Surname,
+			&u.EncryptedPassword,
+		); err != nil {
+			return nil, err
+		}
+		res = append(res, u)
+	}
+
+	return res, nil
+}
+
 // FindByPhone ...
 func (r *UserRepository) FindByPhone(phone string) (*model.User, error) {
 	u := &model.User{}

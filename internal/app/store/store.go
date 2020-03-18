@@ -1,6 +1,6 @@
 package store
 
-// Store ...
+// store ...
 type Store interface {
 	User() UserRepository
 }
