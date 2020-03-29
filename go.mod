@@ -13,6 +13,7 @@ require (
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/securecookie v1.1.1
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
+	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.2.0
 	github.com/mitchellh/go-ps v0.0.0-20190716172923-621e5597135b
 	github.com/sirupsen/logrus v1.4.2

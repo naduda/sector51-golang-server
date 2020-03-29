@@ -31,6 +31,9 @@ func TestUserRepository_Find(t *testing.T) {
 	u2, err := s.User().Find(u1.ID)
 	assert.NoError(t, err)
 	assert.NotNil(t, u2)
+
+	_, err = s.User().Find("2000-01-01T00:00:00.000000Z")
+	assert.EqualError(t, err, store.ErrRecordNotFound.Error())
 }
 
 func TestUserRepository_FindByPhone(t *testing.T) {

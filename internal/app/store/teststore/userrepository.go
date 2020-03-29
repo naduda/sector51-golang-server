@@ -9,7 +9,7 @@ import (
 // UserRepository ...
 type UserRepository struct {
 	store *Store
-	users map[string]*model.User
+	users map[string]model.User
 }
 
 // Create ...
@@ -23,7 +23,7 @@ func (r *UserRepository) Create(u *model.User) error {
 	}
 
 	u.ID = time.Now().String()
-	r.users[u.ID] = u
+	r.users[u.ID] = *u
 
 	return nil
 }
@@ -35,12 +35,12 @@ func (r *UserRepository) Find(id string) (*model.User, error) {
 		return nil, store.ErrRecordNotFound
 	}
 
-	return u, nil
+	return &u, nil
 }
 
 // FindAll ...
-func (r *UserRepository) FindAll() ([]*model.User, error) {
-	res := make([]*model.User, 0)
+func (r *UserRepository) FindAll() ([]model.User, error) {
+	res := make([]model.User, 0)
 	for _, u := range r.users {
 		res = append(res, u)
 	}
@@ -51,7 +51,7 @@ func (r *UserRepository) FindAll() ([]*model.User, error) {
 func (r *UserRepository) FindByPhone(phone string) (*model.User, error) {
 	for _, u := range r.users {
 		if u.Phone == phone {
-			return u, nil
+			return &u, nil
 		}
 	}
 

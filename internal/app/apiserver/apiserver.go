@@ -1,7 +1,8 @@
 package apiserver
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
+	"github.com/naduda/sector51-golang/internal/app/backup"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
@@ -18,10 +19,11 @@ func Start() error {
 	jwtSecret := os.Getenv("JWT_SECRET")
 	logger := logrus.New()
 	db := newDB(connStr, logger)
+	//noinspection GoUnhandledErrorResult
 	defer db.Close()
 
-	//b := backup.New(logger)
-	//go b.Start()
+	b := backup.New(logger)
+	go b.Start()
 
 	store := sqlstore.New(db)
 	srv := newServer(store, jwtSecret, logger)
@@ -30,9 +32,10 @@ func Start() error {
 	return http.ListenAndServe(":"+bindAddr, srv)
 }
 
-func newDB(connStr string, log *logrus.Logger) *sql.DB {
+func newDB(connStr string, log *logrus.Logger) *sqlx.DB {
 	for {
-		db, err := sql.Open("postgres", connStr)
+		//db, err := sql.Open("postgres", connStr)
+		db, err := sqlx.Connect("postgres", connStr)
 		if err == nil {
 			if err := db.Ping(); err == nil {
 				return db
