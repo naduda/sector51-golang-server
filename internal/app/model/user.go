@@ -18,6 +18,7 @@ type User struct {
 	Card              string `json:"card"`
 	Roles             string `json:"roles"`
 	IsMan             bool   `json:"isMan"`
+	Active            bool   `json:"-"`
 	EncryptedPassword string `json:"-"`
 }
 

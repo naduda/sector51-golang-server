@@ -51,10 +51,11 @@ func (r *UserRepository) Find(id string) (*model.User, error) {
 
 // FindAll ...
 func (r *UserRepository) FindAll() ([]model.User, error) {
-	query := "SELECT ui.created as id, ui.phone, ui.name, ui.surname, us.password as EncryptedPassword, " +
-		"ui.card, us.roles, ui.sex as isMan " +
-		"FROM usersecurity us LEFT JOIN userinfo ui ON us.created = ui.created " +
-		"ORDER BY ui.surname, ui.name"
+	query := "SELECT s.dtend > now() as active, ui.created as id, ui.phone, ui.name, ui.surname, " +
+		"us.password as EncryptedPassword, ui.card, us.roles, ui.sex as isMan " +
+		"FROM user_service s LEFT JOIN usersecurity us ON us.created = s.iduser " +
+		"LEFT JOIN userinfo ui ON us.created = ui.created " +
+		"ORDER BY active DESC, ui.surname, ui.name;"
 
 	users := []model.User{}
 	if err := r.store.db.Select(&users, query); err != nil {
