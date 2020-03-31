@@ -14,6 +14,9 @@ func TestUser(t *testing.T) *User {
 		Password: "password",
 		Name:     "Name",
 		Surname:  "Surname",
+		Card:     "1100000001102",
+		Roles:    "USER",
+		IsMan:    true,
 	}
 }
 

@@ -72,6 +72,9 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 			payload: map[string]interface{}{
 				"phone":    "+380505555555",
 				"password": "secret",
+				"card":     "1100000001102",
+				"roles":    "USER",
+				"isMan":    true,
 			},
 			expectedCode: http.StatusCreated,
 		},
@@ -85,6 +88,9 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 			payload: map[string]interface{}{
 				"phone":    "invalid",
 				"password": "short",
+				"card":     "1100000001102",
+				"roles":    "USER",
+				"isMan":    true,
 			},
 			expectedCode: http.StatusUnprocessableEntity,
 		},

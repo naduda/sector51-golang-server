@@ -26,11 +26,12 @@ func (r *UserRepository) Create(u *model.User) error {
 	}
 
 	tx := r.store.db.MustBegin()
-	insertUserSecurityQuery := "INSERT INTO usersecurity (created, password) VALUES ($1, $2)"
-	tx.MustExec(insertUserSecurityQuery, u.ID, u.EncryptedPassword)
+	insertUserSecurityQuery := "INSERT INTO usersecurity (created, password, roles) VALUES ($1, $2, $3)"
+	tx.MustExec(insertUserSecurityQuery, u.ID, u.EncryptedPassword, u.Roles)
 
-	insertUserInfoQuery := "INSERT INTO userinfo (created, phone, name, surname, email) VALUES ($1, $2, $3, $4, '')"
-	tx.MustExec(insertUserInfoQuery, u.ID, u.Phone, u.Name, u.Surname)
+	insertUserInfoQuery := "INSERT INTO userinfo (created, phone, name, surname, card, sex, email) " +
+		"VALUES ($1, $2, $3, $4, $5, $6, '')"
+	tx.MustExec(insertUserInfoQuery, u.ID, u.Phone, u.Name, u.Surname, u.Card, u.IsMan)
 	return tx.Commit()
 }
 
@@ -50,7 +51,8 @@ func (r *UserRepository) Find(id string) (*model.User, error) {
 
 // FindAll ...
 func (r *UserRepository) FindAll() ([]model.User, error) {
-	query := "SELECT ui.created as id, ui.phone, ui.name, ui.surname, us.password as EncryptedPassword " +
+	query := "SELECT ui.created as id, ui.phone, ui.name, ui.surname, us.password as EncryptedPassword, " +
+		"ui.card, us.roles, ui.sex as isMan " +
 		"FROM usersecurity us LEFT JOIN userinfo ui ON us.created = ui.created " +
 		"ORDER BY ui.surname, ui.name"
 
