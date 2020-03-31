@@ -27,6 +27,8 @@ func (s *Server) handleUsers() http.HandlerFunc {
 			for _, v := range res {
 				if v.Active {
 					result = append(result, v)
+				} else {
+					break
 				}
 			}
 			httputils.Respond(w, http.StatusOK, result)
