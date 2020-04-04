@@ -74,6 +74,8 @@ func TestServer_HandleUsersCreate(t *testing.T) {
 				"password": "secret",
 				"card":     "1100000001102",
 				"roles":    "USER",
+				"name":     "Sector",
+				"surname":  "Sector",
 				"isMan":    true,
 			},
 			expectedCode: http.StatusCreated,

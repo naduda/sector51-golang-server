@@ -8,15 +8,29 @@ import (
 	"github.com/naduda/sector51-golang/internal/app/model"
 )
 
-func (s *Server) handleUsersCreate() http.HandlerFunc {
-	type request struct {
-		Phone    string `json:"phone"`
-		Password string `json:"password"`
-		Card     string `json:"card"`
-		Roles    string `json:"roles"`
-		IsMan    bool   `json:"isMan"`
+type request struct {
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
+	Card     string `json:"card"`
+	Roles    string `json:"roles"`
+	Name     string `json:"name"`
+	Surname  string `json:"surname"`
+	IsMan    bool   `json:"isMan"`
+}
+
+func requestToUser(req *request) *model.User {
+	return &model.User{
+		Phone:    req.Phone,
+		Password: req.Password,
+		Card:     req.Card,
+		Roles:    req.Roles,
+		Name:     req.Name,
+		Surname:  req.Surname,
+		IsMan:    req.IsMan,
 	}
-	//{"card":"1100000001102","isMan":true,"password":"secret","phone":"+380505555555","roles":"USER"}
+}
+
+func (s *Server) handleUsersCreate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := &request{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
@@ -24,13 +38,26 @@ func (s *Server) handleUsersCreate() http.HandlerFunc {
 			return
 		}
 
-		u := &model.User{
-			Phone:    req.Phone,
-			Password: req.Password,
-			Card:     req.Card,
-			Roles:    req.Roles,
-			IsMan:    req.IsMan,
+		u := requestToUser(req)
+		if err := s.store.User().Create(u); err != nil {
+			httputils.SendError(w, http.StatusUnprocessableEntity, err)
+			return
 		}
+
+		u.Sanitize()
+		httputils.Respond(w, http.StatusCreated, u)
+	}
+}
+
+func (s *Server) handleUpdateUser() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			httputils.SendError(w, http.StatusBadRequest, err)
+			return
+		}
+
+		u := requestToUser(req)
 		if err := s.store.User().Create(u); err != nil {
 			httputils.SendError(w, http.StatusUnprocessableEntity, err)
 			return

@@ -28,6 +28,32 @@ func (r *UserRepository) Create(u *model.User) error {
 	return nil
 }
 
+// Update ...
+func (r *UserRepository) Update(u model.User) error {
+	if _, ok := r.users[u.ID]; !ok {
+		return store.ErrRecordNotFound
+	}
+	r.users[u.ID] = u
+	return nil
+}
+
+// Delete ...
+func (r *UserRepository) Delete(id string) error {
+	if _, ok := r.users[id]; !ok {
+		return store.ErrRecordNotFound
+	}
+
+	res := make(map[string]model.User)
+	for i, v := range r.users {
+		if i == id {
+			continue
+		}
+		res[v.ID] = v
+	}
+	r.users = res
+	return nil
+}
+
 // Find ...
 func (r *UserRepository) Find(id string) (*model.User, error) {
 	u, ok := r.users[id]

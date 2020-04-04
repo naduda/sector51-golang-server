@@ -35,9 +35,35 @@ func (r *UserRepository) Create(u *model.User) error {
 	return tx.Commit()
 }
 
+// Update ...
+func (r *UserRepository) Update(u model.User) error {
+	if err := u.Validate(); err != nil {
+		return err
+	}
+	tx := r.store.db.MustBegin()
+	query := "UPDATE userinfo SET phone = $1, name = $2, surname = $3, card = $4, sex = $5 WHERE created = $6"
+	res := tx.MustExec(query, u.Phone, u.Name, u.Surname, u.Card, u.IsMan, u.ID)
+	err := tx.Commit()
+	rows, _ := res.RowsAffected()
+	if rows < 1 {
+		return store.ErrRecordNotFound
+	}
+	return err
+}
+
+// Delete ...
+func (r *UserRepository) Delete(id string) error {
+	queryUI := "DELETE FROM userinfo WHERE created = $1"
+	queryUS := "DELETE FROM usersecurity WHERE created = $1"
+	tx := r.store.db.MustBegin()
+	tx.MustExec(queryUI, id)
+	tx.MustExec(queryUS, id)
+	return tx.Commit()
+}
+
 // Find ...
 func (r *UserRepository) Find(id string) (*model.User, error) {
-	query := "SELECT ui.created as id, ui.phone, ui.name, ui.surname, us.password as EncryptedPassword " +
+	query := "SELECT ui.created as id, ui.phone, ui.name, ui.surname, ui.card, ui.sex as isMan, us.password as EncryptedPassword " +
 		"FROM usersecurity us LEFT JOIN userinfo ui ON us.created = ui.created WHERE us.created = $1"
 
 	u := model.User{}

@@ -30,6 +30,8 @@ func (u *User) Validate() error {
 		validation.Field(&u.Password, validation.By(requiredIf(u.EncryptedPassword == "")), validation.Length(4, 100)),
 		validation.Field(&u.Card, validation.Required, validation.Length(13, 14)),
 		validation.Field(&u.Roles, validation.Required, validation.Length(3, 50)),
+		validation.Field(&u.Name, validation.Required, validation.Length(2, 25)),
+		validation.Field(&u.Surname, validation.Required, validation.Length(2, 25)),
 	)
 }
 

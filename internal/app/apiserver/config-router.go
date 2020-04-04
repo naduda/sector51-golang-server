@@ -12,8 +12,8 @@ func (s *Server) configureRouter() {
 	s.router.Use(s.setRequestID)
 	s.router.Use(s.logRequest)
 	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
-	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods("POST")
 	s.router.HandleFunc("/login", s.handleLogin()).Methods("POST")
+	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods("POST")
 	s.router.HandleFunc("/break", s.handleBreak()).Methods("POST")
 
 	private := s.router.PathPrefix("/private").Subrouter()
@@ -27,6 +27,7 @@ func (s *Server) configureRouter() {
 	private.HandleFunc("/whoami", s.handleWhoami())
 	private.HandleFunc("/clients-list", s.handleUsers())
 	private.HandleFunc("/services", clients.HandleServices(s.store.Service()))
+	s.router.HandleFunc("/user", s.handleUpdateUser()).Methods("PUT")
 
 	fs := http.Dir("static")
 	fileHandler := http.FileServer(fs)

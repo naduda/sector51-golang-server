@@ -12,11 +12,43 @@ import (
 func TestUserRepository_Create(t *testing.T) {
 	db, teardown := sqlstore.TestDB(t, databaseURL)
 	defer teardown("usersecurity", "userinfo")
-
 	s := sqlstore.New(db)
 	u := model.TestUser(t)
 	assert.NoError(t, s.User().Create(u))
 	assert.NotNil(t, u.ID)
+}
+
+func TestUserRepository_Update(t *testing.T) {
+	db, teardown := sqlstore.TestDB(t, databaseURL)
+	defer teardown("usersecurity", "userinfo")
+	s := sqlstore.New(db)
+
+	u := model.TestUser(t)
+	assert.NoError(t, s.User().Create(u))
+	assert.NotNil(t, u.ID)
+
+	u.Card = "1234567890123"
+	err := s.User().Update(*u)
+	assert.NoError(t, err)
+
+	u2, err := s.User().Find(u.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, "1234567890123", u2.Card)
+}
+
+func TestUserRepository_Delete(t *testing.T) {
+	db, teardown := sqlstore.TestDB(t, databaseURL)
+	defer teardown("usersecurity", "userinfo")
+	s := sqlstore.New(db)
+
+	u := model.TestUser(t)
+	assert.NoError(t, s.User().Create(u))
+	assert.NotNil(t, u.ID)
+
+	err := s.User().Delete(u.ID)
+	assert.NoError(t, err)
+	all, err := s.User().FindAll()
+	assert.Equal(t, 0, len(all))
 }
 
 func TestUserRepository_Find(t *testing.T) {

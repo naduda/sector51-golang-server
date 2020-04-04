@@ -7,6 +7,8 @@ import (
 // UserRepository ...
 type UserRepository interface {
 	Create(*model.User) error
+	Update(model.User) error
+	Delete(string) error
 	Find(string) (*model.User, error)
 	FindAll() ([]model.User, error)
 	FindByPhone(string) (*model.User, error)

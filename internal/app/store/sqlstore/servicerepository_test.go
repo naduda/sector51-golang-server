@@ -39,13 +39,12 @@ func TestServiceRepository_UpdateService(t *testing.T) {
 
 	f, _ := r.Service().Find(first.ID)
 	assert.Equal(t, 8888, f.Price)
+	first.Price = original
+	_ = r.Service().UpdateService(first)
 
 	first.ID = 100
 	err = r.Service().UpdateService(first)
 	assert.Error(t, store.ErrRecordNotFound)
-
-	first.Price = original
-	_ = r.Service().UpdateService(first)
 }
 
 func TestServiceRepository_Find(t *testing.T) {
