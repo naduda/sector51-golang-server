@@ -9,6 +9,7 @@ import (
 )
 
 type request struct {
+	ID       string `json:"id"`
 	Phone    string `json:"phone"`
 	Password string `json:"password"`
 	Card     string `json:"card"`
@@ -20,6 +21,7 @@ type request struct {
 
 func requestToUser(req *request) *model.User {
 	return &model.User{
+		ID:       req.ID,
 		Phone:    req.Phone,
 		Password: req.Password,
 		Card:     req.Card,
@@ -58,12 +60,11 @@ func (s *Server) handleUpdateUser() http.HandlerFunc {
 		}
 
 		u := requestToUser(req)
-		if err := s.store.User().Create(u); err != nil {
+		if err := s.store.User().Update(*u); err != nil {
 			httputils.SendError(w, http.StatusUnprocessableEntity, err)
 			return
 		}
 
-		u.Sanitize()
 		httputils.Respond(w, http.StatusCreated, u)
 	}
 }

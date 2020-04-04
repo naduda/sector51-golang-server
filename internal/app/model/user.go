@@ -24,10 +24,17 @@ type User struct {
 
 // Validate ...
 func (u *User) Validate() error {
+	passwordRule := []validation.Rule{}
+	if u.ID == "" {
+		passwordRule = []validation.Rule{
+			validation.By(requiredIf(u.ID == "" && u.EncryptedPassword == "")),
+			validation.Length(4, 100),
+		}
+	}
 	return validation.ValidateStruct(
 		u,
 		validation.Field(&u.Phone, validation.Required, is.E164),
-		validation.Field(&u.Password, validation.By(requiredIf(u.EncryptedPassword == "")), validation.Length(4, 100)),
+		validation.Field(&u.Password, passwordRule...),
 		validation.Field(&u.Card, validation.Required, validation.Length(13, 14)),
 		validation.Field(&u.Roles, validation.Required, validation.Length(3, 50)),
 		validation.Field(&u.Name, validation.Required, validation.Length(2, 25)),
