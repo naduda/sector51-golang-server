@@ -77,7 +77,7 @@ func (r *UserRepository) Find(id string) (*model.User, error) {
 
 // FindAll ...
 func (r *UserRepository) FindAll() ([]model.User, error) {
-	query := "SELECT s.dtend is not null and s.dtend > now() as active, ui.created as id, ui.phone, ui.name, " +
+	query := "SELECT distinct s.dtend is not null and s.dtend > now() as active, ui.created as id, ui.phone, ui.name, " +
 		"ui.surname, us.password as EncryptedPassword, ui.card, us.roles, ui.sex as isMan " +
 		"FROM usersecurity us LEFT JOIN userinfo ui ON us.created = ui.created " +
 		"LEFT JOIN user_service s ON us.created = s.iduser " +
