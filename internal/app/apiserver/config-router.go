@@ -26,8 +26,9 @@ func (s *Server) configureRouter() {
 	// clients
 	private.HandleFunc("/whoami", s.handleWhoami())
 	private.HandleFunc("/clients-list", s.handleUsers())
-	private.HandleFunc("/services", clients.HandleServices(s.store.Service()))
 	private.HandleFunc("/user", s.handleUpdateUser()).Methods("PUT")
+	private.HandleFunc("/services", clients.HandleServices(s.store.Service()))
+	private.HandleFunc("/user-services", clients.HandleUserServices(s.store.Service()))
 
 	fs := http.Dir("static")
 	fileHandler := http.FileServer(fs)

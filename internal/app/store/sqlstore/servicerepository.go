@@ -71,7 +71,7 @@ func (r *ServiceRepository) CreateUserService(us *model.UserService) error {
 
 // GetUserServices ...
 func (r *ServiceRepository) GetUserServices(idUser string) ([]model.UserService, error) {
-	query := "SELECT * FROM user_service WHERE iduser = $1"
+	query := "SELECT iduser, idservice, dtbeg, dtend, COALESCE(value, '') as value FROM user_service WHERE iduser = $1"
 	services := []model.UserService{}
 	err := r.store.db.Select(&services, query, idUser)
 	return services, err

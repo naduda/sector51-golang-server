@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
+	"runtime"
 	"time"
 
 	_ "github.com/lib/pq" // ...
@@ -22,8 +23,10 @@ func Start() error {
 	//noinspection GoUnhandledErrorResult
 	defer db.Close()
 
-	b := backup.New(logger)
-	go b.Start()
+	if runtime.GOOS != "windows" {
+		b := backup.New(logger)
+		go b.Start()
+	}
 
 	store := sqlstore.New(db)
 	srv := newServer(store, jwtSecret, logger)
@@ -34,7 +37,6 @@ func Start() error {
 
 func newDB(connStr string, log *logrus.Logger) *sqlx.DB {
 	for {
-		//db, err := sql.Open("postgres", connStr)
 		db, err := sqlx.Connect("postgres", connStr)
 		if err == nil {
 			if err := db.Ping(); err == nil {
