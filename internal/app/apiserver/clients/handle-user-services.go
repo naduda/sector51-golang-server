@@ -10,10 +10,10 @@ import (
 
 func HandleUserServices(repo store.ServiceRepository) http.HandlerFunc {
 	type UserServiceDTO struct {
-		IdService int    `json:"id_service"`
-		IdUser    string `json:"id_user"`
-		DtBeg     int64  `json:"dt_beg"`
-		DtEnd     int64  `json:"dt_end"`
+		IdService int    `json:"idService"`
+		IdUser    string `json:"idUser"`
+		DtBeg     int64  `json:"dtBeg"`
+		DtEnd     int64  `json:"dtEnd"`
 		Value     string `json:"value"`
 	}
 
