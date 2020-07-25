@@ -1,7 +1,6 @@
 package backup
 
 import (
-	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -184,24 +183,4 @@ func ClearFolder(dir string) error {
 		}
 	}
 	return nil
-}
-
-// FindFileByExt ...
-func FindFileByExt(dir, ext string) (string, error) {
-	d, err := os.Open(dir)
-	if err != nil {
-		return "", err
-	}
-	defer d.Close()
-	names, err := d.Readdirnames(-1)
-	if err != nil {
-		return "", err
-	}
-	ext = strings.ToLower(ext)
-	for _, name := range names {
-		if strings.HasSuffix(strings.ToLower(name), ext) {
-			return name, nil
-		}
-	}
-	return "", errors.New("file not found")
 }

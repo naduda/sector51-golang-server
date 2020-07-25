@@ -20,6 +20,14 @@ type ServiceRepository interface {
 	Find(int) (*model.Service, error)
 	UpdateService(model.Service) error
 	CreateUserService(*model.UserService) error
+	UpdateUserService(model.UserService) error
 	GetUserServices(string) ([]model.UserService, error)
 	DeleteUserService(string, int) error
+}
+
+// BoxRepository ...
+type BoxRepository interface {
+	List() ([]model.Box, error)
+	Update(model.Box) error
+	GetByCard(string) (*model.Box, error)
 }

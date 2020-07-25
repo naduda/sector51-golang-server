@@ -47,3 +47,16 @@ func TestUserService(t *testing.T) *UserService {
 		Value:     "",
 	}
 }
+
+// TestBox ...
+func TestBox(t *testing.T) *Box {
+	t.Helper()
+
+	curTime := time.Now().UTC().Format("2006-01-02T15:04:05.999999Z")
+	return &Box{
+		Card:   "1100000001102",
+		IdType: 2,
+		Time:   curTime,
+		Value:  37,
+	}
+}

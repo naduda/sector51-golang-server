@@ -25,10 +25,10 @@ func (s *Service) Validate() error {
 
 // UserService ...
 type UserService struct {
-	IdService int       `json:"id_service"`
-	IdUser    string    `json:"id_user"`
-	DtBeg     time.Time `json:"dt_beg"`
-	DtEnd     time.Time `json:"dt_end"`
+	IdService int       `json:"idService"`
+	IdUser    string    `json:"idUser"`
+	DtBeg     time.Time `json:"dtBeg"`
+	DtEnd     time.Time `json:"dtEnd"`
 	Value     string    `json:"value"`
 }
 

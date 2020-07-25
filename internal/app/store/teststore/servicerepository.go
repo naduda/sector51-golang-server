@@ -71,6 +71,23 @@ func (r *ServiceRepository) CreateUserService(us *model.UserService) error {
 	return nil
 }
 
+// UpdateUserService ...
+func (r *ServiceRepository) UpdateUserService(us model.UserService) error {
+	if err := us.Validate(); err != nil {
+		return err
+	}
+
+	exists, ok := r.userServices[us.IdUser]
+	if !ok {
+		return store.ErrRecordNotFound
+	}
+
+	exists = append(exists, us)
+	r.userServices[us.IdUser] = exists
+
+	return nil
+}
+
 // DeleteUserService ...
 func (r *ServiceRepository) DeleteUserService(idUser string, idService int) error {
 	if _, ok := r.services[idService]; !ok {

@@ -23,12 +23,16 @@ func (s *Server) configureRouter() {
 	private.HandleFunc("/create-google-token", backuphandlers.HandleCreateGoogleTokenFile()).Methods("POST")
 	private.HandleFunc("/backup", backuphandlers.HandleBackup(s.logger)).Methods("POST")
 	private.HandleFunc("/restore", backuphandlers.HandleRestore(s.logger)).Methods("POST")
+	private.HandleFunc("/restore-file", backuphandlers.HandleRestore2(s.logger)).Methods("POST")
 	// clients
 	private.HandleFunc("/whoami", s.handleWhoami())
 	private.HandleFunc("/clients-list", s.handleUsers())
 	private.HandleFunc("/user", s.handleUpdateUser()).Methods("PUT")
 	private.HandleFunc("/services", clients.HandleServices(s.store.Service()))
 	private.HandleFunc("/user-services", clients.HandleUserServices(s.store.Service()))
+	private.HandleFunc("/user-services/delete", clients.HandleUserServicesDelete(s.store.Service())).Methods("POST")
+	private.HandleFunc("/boxes", clients.HandleBoxes(s.store.Boxes()))
+	private.HandleFunc("/box", clients.HandleBox(s.store.Boxes())).Methods("PUT")
 
 	fs := http.Dir("static")
 	fileHandler := http.FileServer(fs)

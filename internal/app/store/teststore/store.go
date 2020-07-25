@@ -9,6 +9,7 @@ import (
 type Store struct {
 	userRepository    *UserRepository
 	serviceRepository *ServiceRepository
+	boxRepository     *BoxRepository
 }
 
 // New ...
@@ -55,4 +56,31 @@ func (s *Store) Service() store.ServiceRepository {
 	}
 
 	return s.serviceRepository
+}
+
+// Boxes ...
+func (s *Store) Boxes() store.BoxRepository {
+	if s.boxRepository != nil {
+		return s.boxRepository
+	}
+
+	boxesForTest := make(map[int]model.Box)
+
+	s.boxRepository = &BoxRepository{
+		store: s,
+		boxes: boxesForTest,
+	}
+
+	for i := 0; i < 50; i++ {
+		for t := 0; t < 3; t++ {
+			boxesForTest[t*50+i] = model.Box{
+				Card:   "",
+				IdType: t + 1,
+				Value:  i + 1,
+				Time:   "",
+			}
+		}
+	}
+
+	return s.boxRepository
 }

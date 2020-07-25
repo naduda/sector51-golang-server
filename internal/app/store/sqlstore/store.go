@@ -11,6 +11,7 @@ type Store struct {
 	db                *sqlx.DB
 	userRepository    *UserRepository
 	serviceRepository *ServiceRepository
+	boxRepository     *BoxRepository
 }
 
 // New ...
@@ -44,4 +45,17 @@ func (s *Store) Service() store.ServiceRepository {
 	}
 
 	return s.serviceRepository
+}
+
+// Boxes ...
+func (s *Store) Boxes() store.BoxRepository {
+	if s.boxRepository != nil {
+		return s.boxRepository
+	}
+
+	s.boxRepository = &BoxRepository{
+		store: s,
+	}
+
+	return s.boxRepository
 }

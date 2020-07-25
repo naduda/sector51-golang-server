@@ -58,6 +58,29 @@ func TestServiceRepository_CreateUserService(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestServiceRepository_UpdateUserService(t *testing.T) {
+	r := teststore.New()
+	us := model.TestUserService(t)
+	us.IdService = 13
+
+	err := r.Service().CreateUserService(us)
+	assert.NoError(t, err)
+
+	res, err := r.Service().GetUserServices(us.IdUser)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, len(res))
+
+	res[0].Value = "131"
+	err = r.Service().UpdateUserService(res[0])
+	assert.NoError(t, err)
+
+	_, err = r.Service().GetUserServices("")
+	assert.Error(t, store.ErrRecordNotFound)
+
+	res, err = r.Service().GetUserServices(us.IdUser)
+	assert.Equal(t, "131", res[0].Value)
+}
+
 func TestServiceRepository_GetUserServices(t *testing.T) {
 	r := teststore.New()
 	us := model.TestUserService(t)
