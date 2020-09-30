@@ -12,6 +12,10 @@ type UserRepository struct {
 	users map[string]model.User
 }
 
+func (r *UserRepository) FixPhones() error {
+	return nil
+}
+
 // Create ...
 func (r *UserRepository) Create(u *model.User) error {
 	if err := u.Validate(); err != nil {

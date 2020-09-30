@@ -22,7 +22,7 @@ func (s *Server) handleUsers() http.HandlerFunc {
 			return
 		}
 
-		result := []model.User{}
+		var result []model.User
 		if f == "" {
 			for _, v := range res {
 				if v.Active {

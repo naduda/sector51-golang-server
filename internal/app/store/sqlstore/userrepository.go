@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/naduda/sector51-golang/internal/app/model"
@@ -11,6 +12,11 @@ import (
 // UserRepository ...
 type UserRepository struct {
 	store *Store
+}
+
+func (r *UserRepository) FixPhones() error {
+	fmt.Println("qwe")
+	return nil
 }
 
 // Create ...

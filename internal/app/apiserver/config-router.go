@@ -13,8 +13,10 @@ func (s *Server) configureRouter() {
 	s.router.Use(s.logRequest)
 	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
 	s.router.HandleFunc("/login", s.handleLogin()).Methods("POST")
-	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods("POST")
+	s.router.HandleFunc("/first-user", s.handleUsersCreate(true)).Methods("POST")
+	s.router.HandleFunc("/users", s.handleUsersCreate(false)).Methods("POST")
 	s.router.HandleFunc("/break", s.handleBreak()).Methods("POST")
+	s.router.HandleFunc("/fix-phones", s.handleFixPhones())
 
 	private := s.router.PathPrefix("/private").Subrouter()
 	private.Use(s.authUser)
