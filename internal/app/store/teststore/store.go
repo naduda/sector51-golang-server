@@ -1,6 +1,7 @@
 package teststore
 
 import (
+	"github.com/jmoiron/sqlx"
 	"github.com/naduda/sector51-golang/internal/app/model"
 	"github.com/naduda/sector51-golang/internal/app/store"
 )
@@ -10,6 +11,11 @@ type Store struct {
 	userRepository    *UserRepository
 	serviceRepository *ServiceRepository
 	boxRepository     *BoxRepository
+}
+
+// test store doesn't have db
+func (s *Store) DB() *sqlx.DB {
+	return nil
 }
 
 // New ...

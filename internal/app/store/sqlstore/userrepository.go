@@ -1,6 +1,7 @@
 package sqlstore
 
 import (
+	"bytes"
 	"database/sql"
 	"time"
 
@@ -93,8 +94,17 @@ func (r *UserRepository) FindAll() ([]model.User, error) {
 
 // FindByPhone ...
 func (r *UserRepository) FindByPhone(phone string) (*model.User, error) {
+	phone = phone[len(phone)-10:]
+	var buffer bytes.Buffer
+	buffer.WriteRune('%')
+	for _, r := range phone {
+		buffer.WriteRune(r)
+		buffer.WriteRune('%')
+	}
+	phone = buffer.String()
 	query := "SELECT ui.created as id, ui.phone, ui.name, ui.surname, us.password as EncryptedPassword " +
-		"FROM usersecurity us LEFT JOIN userinfo ui ON us.created = ui.created WHERE ui.phone = $1"
+		"FROM usersecurity us LEFT JOIN userinfo ui ON us.created = ui.created " +
+		"WHERE ui.phone like $1 LIMIT 1"
 
 	u := model.User{}
 	err := r.store.db.Get(&u, query, phone)

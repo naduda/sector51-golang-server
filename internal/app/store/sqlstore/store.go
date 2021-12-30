@@ -14,6 +14,11 @@ type Store struct {
 	boxRepository     *BoxRepository
 }
 
+// DB ...
+func (s *Store) DB() *sqlx.DB {
+	return s.db
+}
+
 // New ...
 func New(db *sqlx.DB) *Store {
 	return &Store{
